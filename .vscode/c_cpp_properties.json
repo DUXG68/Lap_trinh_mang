@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ]
+        }
+        {
+            "name": "gcc",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "E:/20222/lập trình mạng/code",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "browse": {
+              "path": [
+                "${workspaceFolder}"
+              ],
+              "limitSymbolsToIncludedHeaders": true,
+              "databaseFilename": ""
+            }
+          }
+    ],
+    "version": 4
+}

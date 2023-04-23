@@ -6,19 +6,11 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <time.h>
-
-struct SinhVien {
-    char mssv[9];
-    char hoTen[64];
-    char ngaySinh[11];
-    float diemTrungBinh;
-};
 
 int main(int argc, char* argv[])
 {
     // Check enough arguments
-    if (argc != 3)
+    if (argc != 2)
     {
         printf("Missing arguments\n");
         exit(1);
@@ -64,43 +56,38 @@ int main(int argc, char* argv[])
     }
     printf("Client has connected: %s:%d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
     
-    // Write client's message to file
-    char *filename = argv[2];
-    FILE *f = fopen(filename, "a");
-    if (f == NULL)
-    {
-        printf("Open file failed\n");
-        exit(1);
-    }
-
-    int ret;
-    time_t t;
-    t = time(NULL);
-    struct tm tm = *localtime(&t);
+    // Receive message from server
     char buff[512];
+    char computerName[128];
+    char diskNumber;
+    char diskName;
+    short diskSize = 0;
+
     while (1)
     {
-        struct SinhVien sv;    
-        ret = recv(clientSocket, sv.mssv, sizeof(sv.mssv), 0);
+        int ret = recv(clientSocket, buff, sizeof(buff), 0);
         if (ret <= 0) break;
+        printf("%d bytes receive\n", ret);
 
-        ret = recv(clientSocket, sv.hoTen, sizeof(sv.hoTen), 0);
-        if (ret <= 0) break;
+        int pos = 0;
+        memcpy(&diskNumber, buff + pos, sizeof(diskNumber));
+        pos += sizeof(diskNumber);
 
-        ret = recv(clientSocket, sv.ngaySinh, sizeof(sv.ngaySinh), 0);
-        if (ret <= 0) break;
+        memcpy(computerName, buff + 1 + atoi(&diskNumber) * 3, ret - 1 - atoi(&diskNumber) * 3);
+        printf("Computer name: %s\n", computerName);
+        printf("Numbers of disk: %c\n", diskNumber);
 
-        ret = recv(clientSocket, &sv.diemTrungBinh, sizeof(sv.diemTrungBinh), 0);
-        if (ret <= 0) break;
+        for (int i = 0; i < atoi(&diskNumber); ++i)
+        {
+            memcpy(&diskName, buff + pos, sizeof(diskName));
+            pos += sizeof(diskName);
 
-        sprintf(buff, "mssv:%s_hoTen:%s_ngaySinh:%s_diemTrungBinh:%.2f_ipAddress:%s:%d_dateTime:%d/%d/%d %d:%d:%d\n", 
-        sv.mssv, sv.hoTen, sv.ngaySinh, sv.diemTrungBinh, inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port),
-        tm.tm_mday, tm.tm_mon+1, tm.tm_year+1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
+            memcpy(&diskSize, buff + pos, sizeof(diskSize));
+            pos += sizeof(diskSize);
 
-        printf("%s", buff);
-        fwrite(buff, 1, strlen(buff), f);
+            printf("%c - %hd\n", diskName, diskSize);
+        }
     }
-    fclose(f);
 
     // Close
     close(clientSocket);

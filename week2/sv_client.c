@@ -7,14 +7,15 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-struct SinhVien {
+struct SinhVien
+{
     char mssv[9];
     char hoTen[64];
     char ngaySinh[11];
     float diemTrungBinh;
 };
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     // Check enough arguments
     if (argc != 3)
@@ -36,7 +37,7 @@ int main(int argc, char* argv[])
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = inet_addr(argv[1]);
     addr.sin_port = htons(atoi(argv[2]));
-    
+
     if (connect(clientSocket, (struct sockaddr *)&addr, sizeof(addr)) == -1)
     {
         printf("Connecting failed\n");
@@ -52,26 +53,28 @@ int main(int argc, char* argv[])
         scanf("%s", sv.mssv);
 
         printf("Nhap ho va ten: ");
-        while (getchar() != '\n');
+        while (getchar() != '\n')
+            ;
         fgets(sv.hoTen, sizeof(sv.hoTen), stdin);
         if (sv.hoTen[strlen(sv.hoTen) - 1] == '\n')
-            sv.hoTen[strlen(sv.hoTen) -1] = 0;
+            sv.hoTen[strlen(sv.hoTen) - 1] = 0;
 
         printf("Nhap ngay sinh: ");
         scanf("%s", sv.ngaySinh);
 
         printf("Nhap diem trung binh: ");
         scanf("%f", &sv.diemTrungBinh);
-        
+
         if (send(clientSocket, &sv, sizeof(sv), 0) == -1)
         {
             printf("Send Error\n");
             break;
         }
-        
+
         printf("Ban co muon tiep tuc (yes/no): ");
         scanf("%s", tmp);
-        if (strncmp(tmp, "no", 2) == 0) break;
+        if (strncmp(tmp, "no", 2) == 0)
+            break;
     }
 
     // Close socket
