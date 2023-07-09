@@ -15,10 +15,26 @@
 
 int port;
 
+// char* getParentPath(char *path)
+// {
+//     char *ptr = strrchr(path, '/');
+//     if (ptr == path)
+//     {
+//         return NULL;
+//     }
+//     else
+//     {
+//         int length = ptr - path;
+//         char *parent = malloc(length + 1);
+//         memcpy(parent, path, length);
+//         parent[length] = 0;
+//         return parent;
+//     }
+// }
 char* getParentPath(char *path)
 {
     char *ptr = strrchr(path, '/');
-    if (ptr == path)
+    if (ptr == NULL)  // Kiểm tra xem có tìm thấy ký tự '/' hay không
     {
         return NULL;
     }
@@ -31,6 +47,7 @@ char* getParentPath(char *path)
         return parent;
     }
 }
+
 
 void signal_handler(int signo)
 {
